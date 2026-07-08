@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: local_secure_password123
       POSTGRES_DB: kanban_db
     ports:
-      - "5433:5432"
+      - "5434:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always
