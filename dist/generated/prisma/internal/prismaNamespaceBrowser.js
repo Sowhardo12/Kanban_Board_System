@@ -62,6 +62,7 @@ exports.UserScalarFieldEnum = {
     name: 'name',
     email: 'email',
     password: 'password',
+    hashedRefreshToken: 'hashedRefreshToken',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
 };

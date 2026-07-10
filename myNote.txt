@@ -12,3 +12,7 @@ local run proc:
 
 docker-compose up -d
 npm run start:dev
+
+changes in schema.prisma , run following
+npx prisma migrate dev --name name_of_migration
+npx prisma generate   -> generating the client (updated)

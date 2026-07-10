@@ -54,6 +54,19 @@ let AuthService = class AuthService {
         this.prisma = prisma;
         this.jwtService = jwtService;
     }
+    async generateTokens(userId, email) {
+        const [accessToken, refreshToken] = await Promise.all([
+            this.jwtService.signAsync({ sub: userId, email }, { secret: process.env.JWT_SECRET, expiresIn: '10m' }), this.jwtService.signAsync({ sub: userId, email }, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '7d' }),
+        ]);
+        return { access_token: accessToken, refresh_token: refreshToken };
+    }
+    async updateRefreshToken(userId, refreshToken) {
+        const hashed = await bcrypt.hash(refreshToken, 10);
+        await this.prisma.user.update({
+            where: { id: userId },
+            data: { hashedRefreshToken: hashed },
+        });
+    }
     async register(dto) {
         const existingUser = await this.prisma.user.findUnique({ where: { email: dto.email }, });
         if (existingUser) {
@@ -68,8 +81,9 @@ let AuthService = class AuthService {
                 password: hashedPassword,
             },
         });
-        const { password, ...others } = user;
-        return others;
+        const tokens = await this.generateTokens(user.id, user.email);
+        await this.updateRefreshToken(user.id, tokens.refresh_token);
+        return tokens;
     }
     async login(dto) {
         const user = await this.prisma.user.findUnique({
@@ -82,10 +96,20 @@ let AuthService = class AuthService {
         if (!isPasswordValid) {
             throw new common_1.UnauthorizedException('Invalid Credentials');
         }
-        const accessToken = this.jwtService.sign({ sub: user.id, email: user.email });
-        return {
-            access_token: accessToken,
-        };
+        const tokens = await this.generateTokens(user.id, user.email);
+        await this.updateRefreshToken(user.id, tokens.refresh_token);
+        return tokens;
+    }
+    async refreshTokens(userId, refreshToken) {
+        const user = await this.prisma.user.findUnique({ where: { id: userId } });
+        if (!user || !user.hashedRefreshToken)
+            throw new common_1.ForbiddenException('Access Denied');
+        const matches = await bcrypt.compare(refreshToken, user.hashedRefreshToken);
+        if (!matches)
+            throw new common_1.ForbiddenException('Access Denied');
+        const tokens = await this.generateTokens(user.id, user.email);
+        await this.updateRefreshToken(user.id, tokens.refresh_token);
+        return tokens;
     }
 };
 exports.AuthService = AuthService;

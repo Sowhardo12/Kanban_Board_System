@@ -463,9 +463,6 @@ export type TaskUncheckedUpdateManyWithoutColumnNestedInput = {
     updateMany?: Prisma.TaskUpdateManyWithWhereWithoutColumnInput | Prisma.TaskUpdateManyWithWhereWithoutColumnInput[];
     deleteMany?: Prisma.TaskScalarWhereInput | Prisma.TaskScalarWhereInput[];
 };
-export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null;
-};
 export type TaskCreateNestedOneWithoutLabelsInput = {
     create?: Prisma.XOR<Prisma.TaskCreateWithoutLabelsInput, Prisma.TaskUncheckedCreateWithoutLabelsInput>;
     connectOrCreate?: Prisma.TaskCreateOrConnectWithoutLabelsInput;
