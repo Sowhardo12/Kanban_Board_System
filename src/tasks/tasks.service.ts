@@ -50,9 +50,8 @@ async moveTaskPosition(taskId: string, dto: UpdateTaskPositionDto, userId: strin
       await this.verifyColumnAccess(dto.columnId, userId);
     }
 
-    // Execute an atomic ACID transaction block
+    //ACID transaction
     return this.prisma.$transaction(async (tx) => {
-      // 🔒 MITIGATE RACE CONDITIONS: Lock rows inside this column during the reorder runtime
       await tx.$executeRaw`
         SELECT id FROM "Task" 
         WHERE "columnId" = ${dto.columnId} AND "deletedAt" IS NULL 
@@ -99,7 +98,7 @@ async moveTaskPosition(taskId: string, dto: UpdateTaskPositionDto, userId: strin
         });
       }
 
-      // Finalize moving the target task to its new absolute coordinates
+      // moving the target task to its new absolute coordinates
       return tx.task.update({
         where: { id: taskId },
         data: { columnId: dto.columnId, position: dto.position },
