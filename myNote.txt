@@ -16,3 +16,25 @@ npm run start:dev
 changes in schema.prisma , run following
 npx prisma migrate dev --name name_of_migration
 npx prisma generate   -> generating the client (updated)
+
+for decision:
+why dependency injection
+why use Hashed Password 
+why SOLID principal following with example
+why get-user.decorator.ts?
+
+in challenges: shifting from express to nest , and introduction to prisma
+
+to register: http/loacalhost:3000/auth/register  POST
+{
+  "name":"name_of_person",
+  "email":"valid@example.com",
+  "password":"securwed8e0sfEXAMPLE"
+}
+to login: auth/login and same body just email and then password    POST
+response: access and refresh tokens
+
+BOARD CREATE - POST
+http://localhost:3000/boards
+content-type: Application/Json
+Include: Bearer <theTOken>
