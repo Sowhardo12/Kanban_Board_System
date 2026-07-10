@@ -1,98 +1,98 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Production Grade & Secure Kanban Board Management System API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A secure, production-ready RESTful API built using **NestJS**, **TypeScript**, and **Prisma 7**, backed by a containerized **PostgreSQL** instance. This system supports multi-tenant workspaces, strict authorization guard isolation, and concurrency-safe task position management.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## Getting Started (Local Development)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
+### 1. Clone the Repository
 
 ```bash
-$ npm install
+git clone https://github.com/Sowhardo12/Kanban_Board_System
+cd kanban-board-system
 ```
 
-## Compile and run the project
+### 2. Configure Environment Variables
+
+Create a `.env` file in the root directory and add the following configuration values:
+
+```env
+PORT=3000
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/kanban_db?schema=public"
+JWT_SECRET="your_ultra_secure_access_token_secret_string"
+JWT_REFRESH_SECRET="your_ultra_secure_refresh_token_secret_string"
+ALLOWED_ORIGINS="http://localhost:3000,http://localhost:5173"
+```
+
+### 3. Start the Database with Docker
+
+Make sure Docker Desktop is running, then start the database container:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+docker-compose up -d
 ```
 
-## Run tests
+### 4. Run Migrations and Generate the Prisma Client
+
+Initialize the database schema and compile the WASM client runtime:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npx prisma migrate dev --name init_structural_schema
+npx prisma generate
 ```
 
-## Deployment
+### 5. Start the Application
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+**Development mode:**
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run start:dev
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+**Production mode:**
 
-## Resources
+```bash
+npm run build
+npm run start:prod
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+The server will start at `http://localhost:3000`. You can access the interactive Swagger API documentation at `http://localhost:3000/api/docs`.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
+## Architectural Decisions and Technical Breakdown
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### 1. Safe Concurrent Task Reordering with ACID Transactions
 
-## Stay in touch
+**The Problem:** When multiple users move tasks around at the same time (for example, dragging a card to a different column or reordering items within a column), standard database operations can run into race conditions. If two users make changes simultaneously, the task positions can end up corrupted or duplicated.
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+**The Solution:** Used a database transaction that locks the affected rows before making any changes. When a task is moved, the system first locks all tasks in the target column using PostgreSQL's `FOR UPDATE` clause. This prevents other users from modifying those tasks until the current operation is complete. The position values are then adjusted safely within this locked window, ensuring the board layout stays consistent even under heavy concurrent usage.
 
-## License
+### 2. Prisma 7 with Hybrid Driver Adapters
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project uses the latest Prisma 7 client architecture. Instead of relying on legacy native binaries, connected the Prisma client directly to a PostgreSQL connection pool using `@prisma/adapter-pg`. This reduces the overall bundle size and improves request handling speed, which is especially beneficial in cloud deployment environments.
+
+### 3. Layered Security Defenses
+
+- **Rate Limiting:** Authentication endpoints (`/auth/*`) are protected with rate limiting, allowing a maximum of 5 login attempts per minute to reduce the risk of brute-force attacks. Although this might break in the production.
+- **Security Headers and CORS:** We use `helmet` middleware to set strict security headers, and CORS is tightly configured to allow only trusted origins, supporting secure multi-tenant separation.
+
+---
+
+
+## Challenges I have faced
+Moving from ExpressJs to NestJs+Typescript+ORM like Prisma was a huge shift for me. It made
+me get out of my comfort zone and see the usefulness of NestJs and its clean code styles. Learning concepts like Dependency Injections and Classes was difficult at first, but along the
+path, things started to click.  
+
+## Future Improvements
+
+- **Real-Time Sync:** Add WebSocket support using NestJS gateways to broadcast board changes live across all connected users.
+- **File Attachments:** Integrate Multer with Cloudinary to allow users to upload and attach files to tasks.
+- **Task Activity Log:** Integrate a task activity system that can keep a log of the overall user activities.
+---
+
+## API Documentation
+
+Once the server is running, visit `http://localhost:3000/api/docs` to explore the full interactive Swagger documentation for all available endpoints.
