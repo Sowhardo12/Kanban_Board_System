@@ -2,8 +2,11 @@ import { Controller, Body,HttpCode,HttpStatus,Post, Req, UseGuards, ForbiddenExc
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { ThrottlerGuard } from '@nestjs/throttler';
+
 
 @Controller('auth')   // base url:  /auth/
+@UseGuards(ThrottlerGuard)   //rate limiting
 export class AuthController {
   constructor(
     private readonly authService : AuthService

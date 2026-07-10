@@ -7,9 +7,16 @@ import { ConfigModule } from '@nestjs/config';
 import { BoardsModule } from './boards/boards.module';
 import { ColumnsModule } from './columns/columns.module';
 import { TasksModule } from './tasks/tasks.module';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
-  imports: [ ConfigModule.forRoot({isGlobal:true,}) ,PrismaModule,AuthModule, BoardsModule, ColumnsModule, TasksModule],
+  imports: [ 
+  ThrottlerModule.forRoot([{    //for rate limiting
+      ttl: 60000,
+      limit: 5,
+    }]),  
+  ConfigModule.forRoot({isGlobal:true,}) ,PrismaModule,AuthModule, BoardsModule, ColumnsModule, TasksModule],
   controllers: [AppController],
   providers: [AppService],
 })
