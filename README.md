@@ -80,6 +80,43 @@ This project uses the latest Prisma 7 client architecture. Instead of relying on
 
 ---
 
+## Task Positioning Logic
+
+Moving tasks around a Kanban board is harder than it looks. Two users dragging cards at the same time can corrupt position values. Here is how I solved it.
+
+### The Problem
+
+When a task moves, two things must happen in order:
+
+1. Fill the gap left behind.
+2. Make room in the destination column.
+
+Without locking, two concurrent moves could read the same positions and write conflicting values.
+
+### The Approach: Lock, Shift, Then Move
+
+I wrapped the entire operation in a database transaction with row-level locking.
+
+**Step 1: Lock the destination column**
+
+I lock every task in the target column using PostgreSQL's `FOR UPDATE`. This blocks other move operations on those rows until the current one finishes.
+
+**Step 2: Shift surrounding tasks**
+
+- **Same column:** Only tasks between the old and new position shift. Tasks above the move slide down by one, tasks below slide up by one.
+- **Different columns:** Two shifts happen. First, I close the gap in the source column by decrementing positions below the moved task. Second, I open a gap in the destination column by incrementing positions at or below the insertion point.
+
+**Step 3: Place the task**
+
+Only after all surrounding tasks are adjusted do I update the moved task's `columnId` and `position`.
+
+### It works because:
+
+- The transaction guarantees all steps succeed or none do. If something fails, the database rolls back and the board stays consistent.
+- The `FOR UPDATE` lock prevents race conditions. Even with 100 users dragging at once, PostgreSQL queues the operations and runs them one at a time.
+- Position values stay dense and gap-free, so the board renders in the correct order without empty slots.
+
+
 
 ## Challenges I have faced
 Moving from ExpressJs to NestJs+Typescript+ORM like Prisma was a huge shift for me. It made
