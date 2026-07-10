@@ -11,12 +11,15 @@ const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
 const auth_controller_1 = require("./auth.controller");
 const jwt_1 = require("@nestjs/jwt");
+const passport_1 = require("@nestjs/passport");
+const jwt_strategy_1 = require("./jwt.strategy");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
 exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            passport_1.PassportModule,
             jwt_1.JwtModule.register({
                 global: true,
                 secret: process.env.JWT_SECRET || 'fallback_secret',
@@ -24,7 +27,7 @@ exports.AuthModule = AuthModule = __decorate([
             }),
         ],
         controllers: [auth_controller_1.AuthController],
-        providers: [auth_service_1.AuthService],
+        providers: [auth_service_1.AuthService, jwt_strategy_1.JwtStrategy],
     })
 ], AuthModule);
 //# sourceMappingURL=auth.module.js.map

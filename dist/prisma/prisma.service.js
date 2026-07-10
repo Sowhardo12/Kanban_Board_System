@@ -17,7 +17,6 @@ const pg_1 = require("pg");
 let PrismaService = class PrismaService extends client_1.PrismaClient {
     constructor() {
         console.log(process.env.DATABASE_URL);
-        console.log("CAN U SEE ME BUDDY ?????");
         const pool = new pg_1.Pool({ connectionString: process.env.DATABASE_URL });
         const adapter = new adapter_pg_1.PrismaPg(pool);
         super({ adapter });

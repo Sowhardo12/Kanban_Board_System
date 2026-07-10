@@ -2,7 +2,13 @@ we have used Dependency Injection in Auth Service, what is it??
 ------------
 Suppose a class needs object from another class, like the AuthService class
 needs object from the PrismService class. So will it create it like 
-const prism = new PrismService()  ? no because that violates the SRP principal.
+const prism = new PrismService() inside the class ? no because that violates the SRP principal.
 The auth service should only be responsible for services regarding auth, not create 
 objects of another class itself. Nest does it through dependency injection. Creates 
-the needed object, and injects in the AuthService class's constructor.
+the needed object, saves in Provider and DI container, and injects in the AuthService 
+class's constructor. This increases testability, reusability and causes loose coupling. 
+
+local run proc:
+
+docker-compose up -d
+npm run start:dev
