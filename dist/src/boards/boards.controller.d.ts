@@ -7,9 +7,9 @@ export declare class BoardsController {
         id: string;
     }): Promise<{
         id: string;
-        title: string;
         createdAt: Date;
         updatedAt: Date;
+        title: string;
         deletedAt: Date | null;
         ownerId: string;
     }>;
@@ -17,9 +17,9 @@ export declare class BoardsController {
         id: string;
     }): Promise<{
         id: string;
-        title: string;
         createdAt: Date;
         updatedAt: Date;
+        title: string;
         deletedAt: Date | null;
         ownerId: string;
     }[]>;
@@ -29,30 +29,30 @@ export declare class BoardsController {
         columns: ({
             tasks: {
                 id: string;
-                title: string;
                 createdAt: Date;
                 updatedAt: Date;
+                title: string;
                 deletedAt: Date | null;
                 position: number;
                 description: string | null;
                 priority: string;
+                columnId: string;
                 dueDate: Date | null;
                 assigneeId: string | null;
-                columnId: string;
             }[];
         } & {
             id: string;
-            title: string;
             createdAt: Date;
             updatedAt: Date;
+            title: string;
             order: number;
             boardId: string;
         })[];
     } & {
         id: string;
-        title: string;
         createdAt: Date;
         updatedAt: Date;
+        title: string;
         deletedAt: Date | null;
         ownerId: string;
     }>;
@@ -60,9 +60,9 @@ export declare class BoardsController {
         id: string;
     }): Promise<{
         id: string;
-        title: string;
         createdAt: Date;
         updatedAt: Date;
+        title: string;
         deletedAt: Date | null;
         ownerId: string;
     }>;

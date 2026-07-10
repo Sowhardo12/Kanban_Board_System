@@ -8,30 +8,30 @@ export declare class ColumnsController {
         id: string;
     }): Promise<{
         id: string;
-        title: string;
-        order: number;
         createdAt: Date;
         updatedAt: Date;
+        title: string;
+        order: number;
         boardId: string;
     }>;
     update(id: string, dto: UpdateColumnDto, user: {
         id: string;
     }): Promise<{
         id: string;
-        title: string;
-        order: number;
         createdAt: Date;
         updatedAt: Date;
+        title: string;
+        order: number;
         boardId: string;
     }>;
     remove(id: string, user: {
         id: string;
     }): Promise<{
         id: string;
-        title: string;
-        order: number;
         createdAt: Date;
         updatedAt: Date;
+        title: string;
+        order: number;
         boardId: string;
     }>;
 }

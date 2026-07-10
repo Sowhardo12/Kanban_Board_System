@@ -5,17 +5,17 @@ export declare class BoardsService {
     constructor(prisma: PrismaService);
     create(dto: CreateBoardDto, userId: string): Promise<{
         id: string;
-        title: string;
         createdAt: Date;
         updatedAt: Date;
+        title: string;
         deletedAt: Date | null;
         ownerId: string;
     }>;
     findAllUserBoards(userId: string): Promise<{
         id: string;
-        title: string;
         createdAt: Date;
         updatedAt: Date;
+        title: string;
         deletedAt: Date | null;
         ownerId: string;
     }[]>;
@@ -23,38 +23,38 @@ export declare class BoardsService {
         columns: ({
             tasks: {
                 id: string;
-                title: string;
                 createdAt: Date;
                 updatedAt: Date;
+                title: string;
                 deletedAt: Date | null;
                 position: number;
                 description: string | null;
                 priority: string;
+                columnId: string;
                 dueDate: Date | null;
                 assigneeId: string | null;
-                columnId: string;
             }[];
         } & {
             id: string;
-            title: string;
             createdAt: Date;
             updatedAt: Date;
+            title: string;
             order: number;
             boardId: string;
         })[];
     } & {
         id: string;
-        title: string;
         createdAt: Date;
         updatedAt: Date;
+        title: string;
         deletedAt: Date | null;
         ownerId: string;
     }>;
     remove(id: string, userId: string): Promise<{
         id: string;
-        title: string;
         createdAt: Date;
         updatedAt: Date;
+        title: string;
         deletedAt: Date | null;
         ownerId: string;
     }>;

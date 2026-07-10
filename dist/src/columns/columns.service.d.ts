@@ -7,26 +7,26 @@ export declare class ColumnsService {
     private verifyBoardOwner;
     create(boardId: string, dto: CreateColumnDto, userId: string): Promise<{
         id: string;
-        title: string;
-        order: number;
         createdAt: Date;
         updatedAt: Date;
+        title: string;
+        order: number;
         boardId: string;
     }>;
     update(id: string, dto: UpdateColumnDto, userId: string): Promise<{
         id: string;
-        title: string;
-        order: number;
         createdAt: Date;
         updatedAt: Date;
+        title: string;
+        order: number;
         boardId: string;
     }>;
     remove(id: string, userId: string): Promise<{
         id: string;
-        title: string;
-        order: number;
         createdAt: Date;
         updatedAt: Date;
+        title: string;
+        order: number;
         boardId: string;
     }>;
 }

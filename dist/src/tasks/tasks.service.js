@@ -52,46 +52,21 @@ let TasksService = class TasksService {
         });
     }
     async moveTaskPosition(taskId, dto, userId) {
-        const task = await this.prisma.task.findFirst({
-            where: {
-                id: taskId,
-                column: { board: { ownerId: userId, deletedAt: null } }
-            }
-        });
+        const task = await this.prisma.task.findUnique({ where: { id: taskId } });
         if (!task || task.deletedAt)
             throw new common_1.NotFoundException('Task not found');
+        await this.verifyColumnAccess(task.columnId, userId);
         if (task.columnId !== dto.columnId) {
-            const destColumn = await this.prisma.column.findFirst({
-                where: { id: dto.columnId, board: { ownerId: userId, deletedAt: null } }
-            });
-            if (!destColumn)
-                throw new common_1.ForbiddenException('Cannot move to this column');
+            await this.verifyColumnAccess(dto.columnId, userId);
         }
         return this.prisma.$transaction(async (tx) => {
             await tx.$executeRaw `
-      SELECT id FROM "Task" 
-      WHERE "columnId" = ${dto.columnId} AND "deletedAt" IS NULL 
-      FOR UPDATE
-    `;
-            if (task.columnId !== dto.columnId) {
-                await tx.task.updateMany({
-                    where: {
-                        columnId: task.columnId,
-                        position: { gt: task.position },
-                        deletedAt: null
-                    },
-                    data: { position: { decrement: 1 } }
-                });
-                await tx.task.updateMany({
-                    where: {
-                        columnId: dto.columnId,
-                        position: { gte: dto.position },
-                        deletedAt: null
-                    },
-                    data: { position: { increment: 1 } }
-                });
-            }
-            else {
+        SELECT id FROM "Task" 
+        WHERE "columnId" = ${dto.columnId} AND "deletedAt" IS NULL 
+        FOR UPDATE
+      `;
+            const isSameColumn = task.columnId === dto.columnId;
+            if (isSameColumn) {
                 if (task.position < dto.position) {
                     await tx.task.updateMany({
                         where: {
@@ -99,7 +74,7 @@ let TasksService = class TasksService {
                             position: { gt: task.position, lte: dto.position },
                             deletedAt: null,
                         },
-                        data: { position: { decrement: 1 } }
+                        data: { position: { decrement: 1 } },
                     });
                 }
                 else if (task.position > dto.position) {
@@ -109,16 +84,23 @@ let TasksService = class TasksService {
                             position: { gte: dto.position, lt: task.position },
                             deletedAt: null,
                         },
-                        data: { position: { increment: 1 } }
+                        data: { position: { increment: 1 } },
                     });
                 }
             }
+            else {
+                await tx.task.updateMany({
+                    where: { columnId: task.columnId, position: { gt: task.position }, deletedAt: null },
+                    data: { position: { decrement: 1 } },
+                });
+                await tx.task.updateMany({
+                    where: { columnId: dto.columnId, position: { gte: dto.position }, deletedAt: null },
+                    data: { position: { increment: 1 } },
+                });
+            }
             return tx.task.update({
                 where: { id: taskId },
-                data: {
-                    columnId: dto.columnId,
-                    position: dto.position
-                }
+                data: { columnId: dto.columnId, position: dto.position },
             });
         });
     }
